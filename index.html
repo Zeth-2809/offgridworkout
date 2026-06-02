@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0A0A0A" media="(prefers-color-scheme:dark)">
+<meta name="theme-color" content="#F5F5F5" media="(prefers-color-scheme:light)">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="OffGrid">
+<meta name="description" content="OFFGRIDWORKOUT — offline fitness trainer, diet planner, meal calculator">
+<title>OFFGRIDWORKOUT</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="app-header">
+  <div class="header-logo">OFFGRID<span>WORKOUT</span></div>
+  <div class="header-right">
+    <span id="header-date" style="font-size:11px;color:var(--t3)"></span>
+  </div>
+</header>
+
+<main id="main">
+
+<!-- ===== HOME ===== -->
+<div class="page on" id="page-home">
+  <div id="install-banner" style="display:none;background:var(--bg2);border:1px solid var(--y);border-radius:var(--rad);padding:12px 14px;margin-bottom:12px;display:none">
+    <div style="font-size:13px;font-weight:700;color:var(--y);margin-bottom:4px">📲 Install App</div>
+    <div style="font-size:12px;color:var(--t2);margin-bottom:8px">Add to your home screen for full offline access</div>
+    <button class="btn btn-y btn-sm" id="install-btn">Install Now</button>
+  </div>
+
+  <div class="hcard">
+    <div class="hcard-title">Ready to train?</div>
+    <div class="hcard-sub">All data stored offline on your device</div>
+  </div>
+
+  <div class="section-label">Quick Start</div>
+  <div class="home-grid">
+    <div class="home-tile" onclick="goPage('gym')">
+      <div class="home-tile-icon">🏋️</div>
+      <div class="home-tile-name">Gym Workouts</div>
+      <div class="home-tile-sub">25+ exercises with guides</div>
+      <div class="home-tile-accent" style="background:#E8FF00"></div>
+    </div>
+    <div class="home-tile" onclick="goPage('home-workout')">
+      <div class="home-tile-icon">🏠</div>
+      <div class="home-tile-name">Home Training</div>
+      <div class="home-tile-sub">No equipment needed</div>
+      <div class="home-tile-accent" style="background:#00FFB3"></div>
+    </div>
+    <div class="home-tile" onclick="goPage('diet')">
+      <div class="home-tile-icon">🥗</div>
+      <div class="home-tile-name">Diet & Body Type</div>
+      <div class="home-tile-sub">Personalised plan</div>
+      <div class="home-tile-accent" style="background:#FFB347"></div>
+    </div>
+    <div class="home-tile" onclick="goPage('meals')">
+      <div class="home-tile-icon">🧮</div>
+      <div class="home-tile-name">Meal Calculator</div>
+      <div class="home-tile-sub">Calories & macros</div>
+      <div class="home-tile-accent" style="background:#B347FF"></div>
+    </div>
+    <div class="home-tile" onclick="goPage('progress')">
+      <div class="home-tile-icon">📈</div>
+      <div class="home-tile-name">Progress</div>
+      <div class="home-tile-sub">Monthly tracking</div>
+      <div class="home-tile-accent" style="background:#FF6B6B"></div>
+    </div>
+    <div class="home-tile" onclick="goPage('calc')">
+      <div class="home-tile-icon">⚡</div>
+      <div class="home-tile-name">BMR Calculator</div>
+      <div class="home-tile-sub">Find your calorie needs</div>
+      <div class="home-tile-accent" style="background:#47C8FF"></div>
+    </div>
+  </div>
+
+  <div class="section-label">This week</div>
+  <div class="card" id="home-weekly-card">
+    <div class="card-hdr"><div class="card-hdr-l"><div class="dot" style="background:#E8FF00"></div>Weekly plan</div><span id="home-plan-name" style="font-size:11px;color:var(--t2)">Not set</span></div>
+    <div id="home-schedule"></div>
+  </div>
+
+  <div class="section-label">Last session</div>
+  <div class="card" id="home-last-session">
+    <div style="font-size:13px;color:var(--t2)">No sessions logged yet. Start training and log your first session!</div>
+  </div>
+</div>
+
+<!-- ===== GYM ===== -->
+<div class="page" id="page-gym">
+  <div class="page-title">Gym Workouts</div>
+  <div class="page-sub">Tap a muscle group to filter exercises</div>
+  <div class="muscle-grid" id="muscle-btns"></div>
+  <div id="exercise-list"></div>
+</div>
+
+<!-- ===== HOME WORKOUT ===== -->
+<div class="page" id="page-home-workout">
+  <div class="page-title">Home Training</div>
+  <div class="page-sub">No equipment — full results</div>
+  <div class="hcard" style="background:var(--g);color:#000">
+    <div class="hcard-title">No gym? No problem.</div>
+    <div class="hcard-sub">Every exercise below needs zero equipment</div>
+  </div>
+  <div id="home-ex-list"></div>
+</div>
+
+<!-- ===== DIET ===== -->
+<div class="page" id="page-diet">
+  <div class="page-title">Body Type & Diet</div>
+  <div class="page-sub">Find your body type to get a personalised plan</div>
+
+  <div class="section-label">What's your body type?</div>
+  <div class="g3" id="bt-cards" style="margin-bottom:14px"></div>
+
+  <div id="bt-result" style="display:none">
+    <div class="hcard" id="bt-result-header">
+      <div class="hcard-title" id="bt-result-name"></div>
+      <div class="hcard-sub" id="bt-result-desc"></div>
+    </div>
+
+    <div class="section-label">Your traits</div>
+    <div class="card">
+      <div id="bt-traits"></div>
+    </div>
+
+    <div class="section-label">Macro targets</div>
+    <div class="card">
+      <div class="macro-bar" id="bt-macro-bar"></div>
+      <div class="g3" style="text-align:center;margin-top:8px" id="bt-macros"></div>
+      <div style="font-size:12px;color:var(--t2);margin-top:10px" id="bt-diet-focus"></div>
+    </div>
+
+    <div class="section-label">Recommended workout plan</div>
+    <div class="card" id="bt-plan-card"></div>
+
+    <div class="section-label">Meal plan sample</div>
+    <div id="bt-meal-plan"></div>
+  </div>
+</div>
+
+<!-- ===== MEALS ===== -->
+<div class="page" id="page-meals">
+  <div class="page-title">Meal Calculator</div>
+  <div class="page-sub">Build a meal and see exact calories + macros</div>
+
+  <div id="cal-total-box" style="display:none">
+    <div class="cal-total">
+      <div class="cal-total-num" id="total-cal">0</div>
+      <div class="cal-total-lbl">TOTAL CALORIES</div>
+      <div class="macro-row">
+        <div class="macro-col"><div class="macro-num" id="total-p">0g</div><div class="macro-lbl">PROTEIN</div></div>
+        <div class="macro-col"><div class="macro-num" id="total-c">0g</div><div class="macro-lbl">CARBS</div></div>
+        <div class="macro-col"><div class="macro-num" id="total-f">0g</div><div class="macro-lbl">FAT</div></div>
+      </div>
+    </div>
+    <div class="section-label">Your plate</div>
+    <div class="plate" id="plate-items"></div>
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <button class="btn btn-full" onclick="clearPlate()">Clear plate</button>
+      <button class="btn btn-y btn-full" onclick="saveMeal()">Save meal</button>
+    </div>
+  </div>
+
+  <div class="section-label">Add foods</div>
+  <input class="food-search" type="search" id="food-search" placeholder="Search foods..." oninput="filterFoods()" autocomplete="off">
+  <div class="food-cat-row" id="food-cats"></div>
+  <div class="food-list" id="food-list"></div>
+
+  <div class="section-label">Saved meals</div>
+  <div id="saved-meals-list">
+    <div style="font-size:13px;color:var(--t2)">No saved meals yet.</div>
+  </div>
+</div>
+
+<!-- ===== BMR CALC ===== -->
+<div class="page" id="page-calc">
+  <div class="page-title">BMR Calculator</div>
+  <div class="page-sub">Find your daily calorie needs (Mifflin-St Jeor)</div>
+
+  <div class="card">
+    <div class="calc-grid">
+      <div class="log-row"><div class="log-label">Age</div><input class="log-input" type="number" id="calc-age" placeholder="25" min="15" max="80"></div>
+      <div class="log-row"><div class="log-label">Weight (kg)</div><input class="log-input" type="number" id="calc-weight" placeholder="70" min="30" max="250"></div>
+      <div class="log-row"><div class="log-label">Height (cm)</div><input class="log-input" type="number" id="calc-height" placeholder="170" min="120" max="250"></div>
+      <div class="log-row"><div class="log-label">Sex</div>
+        <select class="log-input" id="calc-sex">
+          <option value="male">Male</option>
+          <option value="female">Female</option>
+        </select>
+      </div>
+    </div>
+    <div class="log-row"><div class="log-label">Activity level</div>
+      <select class="log-input" id="calc-activity"></select>
+    </div>
+    <div class="log-row"><div class="log-label">Goal</div>
+      <select class="log-input" id="calc-goal">
+        <option value="0">Maintain weight</option>
+        <option value="500">Gain muscle (+500 cal)</option>
+        <option value="-300">Lose fat (-300 cal)</option>
+        <option value="-500">Aggressive cut (-500 cal)</option>
+      </select>
+    </div>
+    <button class="btn btn-y btn-full" style="margin-top:8px" onclick="calcBMR()">Calculate</button>
+  </div>
+
+  <div id="calc-result" style="display:none">
+    <div class="calc-result">
+      <div class="calc-result-num" id="calc-tdee">—</div>
+      <div class="calc-result-lbl">DAILY CALORIES (TDEE)</div>
+    </div>
+    <div class="stats">
+      <div class="stat"><div class="stat-l">BMR</div><div class="stat-v" id="calc-bmr-val">—</div><div class="stat-s">at rest</div></div>
+      <div class="stat"><div class="stat-l">Goal calories</div><div class="stat-v" id="calc-goal-val">—</div><div class="stat-s">per day</div></div>
+      <div class="stat"><div class="stat-l">Protein</div><div class="stat-v" id="calc-protein-val">—</div><div class="stat-s">grams/day</div></div>
+      <div class="stat"><div class="stat-l">Carbs</div><div class="stat-v" id="calc-carbs-val">—</div><div class="stat-s">grams/day</div></div>
+    </div>
+    <div class="card">
+      <div class="card-hdr"><div class="card-hdr-l"><div class="dot" style="background:#E8FF00"></div>Macro breakdown</div></div>
+      <div class="macro-bar" id="calc-macro-bar"></div>
+      <div style="font-size:12px;color:var(--t2);margin-top:8px" id="calc-advice"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== PROGRESS ===== -->
+<div class="page" id="page-progress">
+  <div class="page-title">Progress</div>
+  <div class="page-sub">Monthly tracking and personalised suggestions</div>
+
+  <div class="section-label">Log a session</div>
+  <div class="log-form">
+    <div class="log-row"><div class="log-label">Workout type</div>
+      <select class="log-input" id="log-type">
+        <option value="Chest & Triceps">Chest & Triceps</option>
+        <option value="Back & Biceps">Back & Biceps</option>
+        <option value="Legs & Core">Legs & Core</option>
+        <option value="Shoulders & Arms">Shoulders & Arms</option>
+        <option value="Full Body">Full Body</option>
+        <option value="Cardio / HIIT">Cardio / HIIT</option>
+        <option value="Home Workout">Home Workout</option>
+      </select>
+    </div>
+    <div class="calc-grid">
+      <div class="log-row"><div class="log-label">Duration (min)</div><input class="log-input" type="number" id="log-duration" placeholder="45" min="10" max="180"></div>
+      <div class="log-row"><div class="log-label">Intensity (1–10)</div><input class="log-input" type="number" id="log-intensity" placeholder="7" min="1" max="10"></div>
+    </div>
+    <div class="log-row"><div class="log-label">Notes</div><input class="log-input" type="text" id="log-notes" placeholder="e.g. PR on bench 80kg"></div>
+    <button class="btn btn-y btn-full" style="margin-top:6px" onclick="logSession()">Log session</button>
+  </div>
+
+  <div class="section-label">Body measurements</div>
+  <div class="log-form">
+    <div class="calc-grid">
+      <div class="log-row"><div class="log-label">Weight (kg)</div><input class="log-input" type="number" id="meas-weight" placeholder="70.0" step="0.1"></div>
+      <div class="log-row"><div class="log-label">Body fat (%)</div><input class="log-input" type="number" id="meas-bf" placeholder="18" min="3" max="50"></div>
+    </div>
+    <button class="btn btn-full btn-sm" style="margin-top:6px" onclick="logMeasurement()">Save measurements</button>
+  </div>
+
+  <div class="section-label" id="month-label">This month</div>
+  <div class="card">
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-bottom:6px">
+      <div class="day-label">M</div><div class="day-label">T</div><div class="day-label">W</div>
+      <div class="day-label">T</div><div class="day-label">F</div><div class="day-label">S</div><div class="day-label">S</div>
+    </div>
+    <div class="month-grid" id="month-grid"></div>
+    <div style="display:flex;align-items:center;gap:8px;font-size:11px;color:var(--t2);margin-top:6px">
+      <div style="width:12px;height:12px;border-radius:2px;background:var(--y)"></div>Session logged
+    </div>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-l">Sessions</div><div class="stat-v accent" id="stats-sessions">0</div><div class="stat-s">this month</div></div>
+    <div class="stat"><div class="stat-l">Total mins</div><div class="stat-v" id="stats-mins">0</div><div class="stat-s">trained</div></div>
+    <div class="stat"><div class="stat-l">Avg intensity</div><div class="stat-v" id="stats-intensity">—</div><div class="stat-s">out of 10</div></div>
+    <div class="stat"><div class="stat-l">Streak</div><div class="stat-v accent" id="stats-streak">0</div><div class="stat-s">days</div></div>
+  </div>
+
+  <div class="section-label">AI Suggestions</div>
+  <div id="suggestions-box"></div>
+
+  <div class="section-label">Session history</div>
+  <div class="card" id="session-history">
+    <div style="font-size:13px;color:var(--t2)">No sessions logged yet.</div>
+  </div>
+</div>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<nav class="bot-nav">
+  <button class="bnav on" onclick="goPage('home',this)">
+    <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home
+  </button>
+  <button class="bnav" onclick="goPage('gym',this)">
+    <svg viewBox="0 0 24 24"><path d="M6.5 6.5h11M6.5 17.5h11M3 12h18M7 3v18M17 3v18"/></svg>Gym
+  </button>
+  <button class="bnav" onclick="goPage('diet',this)">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Diet
+  </button>
+  <button class="bnav" onclick="goPage('meals',this)">
+    <svg viewBox="0 0 24 24"><path d="M3 3h18v18H3z M3 9h18 M3 15h18 M9 3v18 M15 3v18"/></svg>Meals
+  </button>
+  <button class="bnav" onclick="goPage('progress',this)">
+    <svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Track
+  </button>
+</nav>
+
+<div class="toast" id="toast"></div>
+
+<!-- EXERCISE DETAIL MODAL -->
+<div class="modal-overlay" id="ex-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-title" id="modal-ex-name"></div>
+    <div id="modal-ex-figure" style="background:var(--bg3);border-radius:var(--rad-s);padding:16px;text-align:center;color:var(--y);margin-bottom:12px"></div>
+    <div class="ex-meta" id="modal-ex-meta"></div>
+    <div style="font-size:13px;color:var(--t2);line-height:1.7;margin-bottom:10px" id="modal-ex-desc"></div>
+    <div style="font-size:12px;font-weight:700;color:var(--t);margin-bottom:6px">COACHING TIPS</div>
+    <div class="ex-tips" id="modal-ex-tips"></div>
+    <button class="log-btn" onclick="quickLogFromModal()">+ Log this exercise</button>
+    <button class="btn btn-full" style="margin-top:8px" onclick="closeModal()">Close</button>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
